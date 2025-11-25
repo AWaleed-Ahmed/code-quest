@@ -1,20 +1,40 @@
+const fs = require('fs');
+const path = require('path');
 const LinkedList = require('../models/LinkedList');
 
+// Load isotopes from CSV
+function loadIsotopes() {
+  const filePath = path.join(__dirname, '../data/isotopes.csv');
+  const data = fs.readFileSync(filePath, 'utf-8');
+  const lines = data.trim().split('\n').slice(1); // skip header
+  const isotopes = lines.map(line => {
+    const [name, halfLife] = line.split(',');
+    return { name, halfLife: parseFloat(halfLife) };
+  });
+  return isotopes;
+}
+
+// GET /api/isotopes
+function getIsotopes(req, res) {
+  const isotopes = loadIsotopes();
+  res.json(isotopes);
+}
+
+// POST /api/simulate
 function simulateDecay(req, res) {
-  const { initialAtoms, halfLife, steps } = req.body;
+  const { isotopeName, initialAtoms, steps } = req.body;
+  const isotopes = loadIsotopes();
+  const isotope = isotopes.find(i => i.name === isotopeName);
 
-  if (!initialAtoms || !halfLife || !steps) {
-    return res.status(400).json({ error: "Missing parameters" });
-  }
+  if (!isotope) return res.status(400).json({ error: "Isotope not found" });
 
-  const remainingAtoms = initialAtoms;
+  const halfLife = isotope.halfLife;
   let currentAtoms = initialAtoms;
   const decayedList = new LinkedList();
   const decayTimeline = [];
 
   for (let t = 1; t <= steps; t++) {
     const decayedThisStep = [];
-    // Probability for one atom to decay in one step
     const decayProb = 1 - Math.pow(0.5, 1 / halfLife);
 
     for (let i = 0; i < currentAtoms; i++) {
@@ -33,10 +53,11 @@ function simulateDecay(req, res) {
   }
 
   res.json({
+    isotope: isotopeName,
     decayTimeline,
     decayedAtoms: decayedList.toArray(),
     remainingAtoms: currentAtoms
   });
 }
 
-module.exports = { simulateDecay };
+module.exports = { getIsotopes, simulateDecay };

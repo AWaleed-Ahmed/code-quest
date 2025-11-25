@@ -8,18 +8,19 @@ class Node {
 class LinkedList {
   constructor() {
     this.head = null;
-    this.tail = null;
   }
 
   add(value) {
     const node = new Node(value);
     if (!this.head) {
       this.head = node;
-      this.tail = node;
-    } else {
-      this.tail.next = node;
-      this.tail = node;
+      return;
     }
+    let current = this.head;
+    while (current.next) {
+      current = current.next;
+    }
+    current.next = node;
   }
 
   toArray() {
