@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import InputForm from "./components/InputForm";
-import RemainingAtoms from "./components/RemainingAtoms";
+import InputForm from "../components/InputForm.jsx";
+import RemainingAtoms from "../components/RemainingAtoms";
 
 
 const Home = () => {
@@ -16,6 +16,7 @@ const Home = () => {
     const fetchIsotopes = async () => {
       try {
         const res = await axios.get("http://localhost:3000/api/isotopes");
+        console.log(res.data);
         setIsotopes(res.data);
         if (res.data.length) setSelectedIsotope(res.data[0].name);
       } catch (err) {

@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 
-import Navbar from "../components/Navbar";
-import Home from "../Pages/Home";
-import TimelinePage from "../Pages/TimelinePage";
-import About from "../Pages/About";
-
+// Correct relative paths:
+import Navbar from "./components/Navbar.jsx";
+import Home from "./Pages/Home.jsx";
+import TimelinePage from "./Pages/TimelinePage.jsx";
+import About from "./Pages/About.jsx";
 const App = () => (
   <>
     <Navbar />
